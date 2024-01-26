@@ -1,5 +1,7 @@
 mod app_menu;
 mod keystroke;
+#[cfg(target_os = "linux")]
+mod linux;
 #[cfg(target_os = "macos")]
 mod mac;
 #[cfg(any(test, feature = "test-support"))]
@@ -33,6 +35,8 @@ use uuid::Uuid;
 
 pub use app_menu::*;
 pub use keystroke::*;
+#[cfg(target_os = "linux")]
+pub(crate) use linux::*;
 #[cfg(target_os = "macos")]
 pub(crate) use mac::*;
 #[cfg(any(test, feature = "test-support"))]
@@ -42,6 +46,11 @@ use time::UtcOffset;
 #[cfg(target_os = "macos")]
 pub(crate) fn current_platform() -> Rc<dyn Platform> {
     Rc::new(MacPlatform::new())
+}
+
+#[cfg(target_os = "linux")]
+pub(crate) fn current_platform() -> Rc<dyn Platform> {
+    Rc::new(LinuxPlatform::new())
 }
 
 pub(crate) trait Platform: 'static {
